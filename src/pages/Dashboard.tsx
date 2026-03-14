@@ -6,7 +6,7 @@ import { useTheme } from '@/hooks/useTheme'
 import { useGistSync } from '@/hooks/useGistSync'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { hasApiKey } from '@/hooks/useClaudeAPI'
-import { buildAllGoalsText } from '@/lib/formatters'
+import { buildWorkdayExport } from '@/lib/formatters'
 import { parseGoalDate, formatDateDisplay, isOverdue } from '@/lib/dates'
 import { GoalCard } from '@/components/goals/GoalCard'
 import { PrintView } from '@/components/goals/PrintView'
@@ -74,13 +74,13 @@ export function Dashboard() {
   }
 
   const handleCopyAll = async () => {
-    const text = buildAllGoalsText(goals)
+    const text = buildWorkdayExport(goals)
     if (!text) {
       toast.info('No goals to copy')
       return
     }
     await navigator.clipboard.writeText(text)
-    toast.success('All goals copied to clipboard!')
+    toast.success('All goals copied for Workday!')
   }
 
   const focusMilestones = goals
@@ -160,7 +160,7 @@ export function Dashboard() {
                   <Printer className="h-4 w-4 mr-1" /> Print
                 </Button>
                 <Button variant="outline" size="sm" onClick={handleCopyAll}>
-                  <ClipboardCopy className="h-4 w-4 mr-1" /> Copy All
+                  <ClipboardCopy className="h-4 w-4 mr-1" /> Copy for Workday
                 </Button>
               </>
             )}
