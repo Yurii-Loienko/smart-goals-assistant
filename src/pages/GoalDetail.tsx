@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useUserStore } from '@/hooks/useUserStore'
 import { useClaudeAPI, hasApiKey } from '@/hooks/useClaudeAPI'
-import { buildFullTargetText } from '@/lib/formatters'
+import { buildFullTargetText, buildWorkdayGoalName, buildWorkdayDescription, buildWorkdayMilestones, buildWorkdayCriteria, buildWorkdayDueDate } from '@/lib/formatters'
 import { QuarterTabs } from '@/components/goals/QuarterTabs'
 import { MilestoneList } from '@/components/goals/MilestoneList'
 import { NotesLog } from '@/components/goals/NotesLog'
@@ -483,6 +483,33 @@ export function GoalDetail() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Workday Export */}
+        {!editing && (
+          <Card className="mt-6">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Copy for Workday</CardTitle>
+              <p className="text-xs text-muted-foreground">Copy each field separately to paste into Workday</p>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {[
+                { label: 'Goal Name', value: buildWorkdayGoalName(goal) },
+                { label: 'Description', value: buildWorkdayDescription(goal) },
+                { label: 'Due Date', value: buildWorkdayDueDate(goal) },
+                { label: 'Success Criteria', value: buildWorkdayCriteria(goal) },
+                { label: 'Milestones', value: buildWorkdayMilestones(goal) },
+              ].filter((f) => f.value).map((field) => (
+                <div key={field.label} className="flex items-center gap-2 group">
+                  <span className="text-xs font-medium w-28 shrink-0 text-muted-foreground">{field.label}</span>
+                  <div className="flex-1 text-xs bg-muted rounded px-2 py-1.5 truncate font-mono">
+                    {field.value.split('\n')[0]}{field.value.includes('\n') ? '...' : ''}
+                  </div>
+                  <CopyButton text={field.value} />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <ImproveModal
