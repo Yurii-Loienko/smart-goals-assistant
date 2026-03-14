@@ -18,8 +18,9 @@ import { Button } from '@/components/ui/button'
 import { Goal, GoalCategory, GoalStatus } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
-import { Plus, Sparkles, User, Moon, Sun, ClipboardCopy, Cloud, Loader2, Search, Printer, BarChart3, Download, Zap, Bot, Kanban } from 'lucide-react'
+import { Plus, Sparkles, User, Moon, Sun, ClipboardCopy, Cloud, Loader2, Search, Printer, BarChart3, Download, Zap, Bot, Kanban, LogOut } from 'lucide-react'
 import { createSeedGoals } from '@/lib/seedGoals'
+import { useAuth } from '@/hooks/useAuth'
 
 const sections: { category: GoalCategory; title: string }[] = [
   { category: 'performance', title: 'Performance Targets' },
@@ -40,6 +41,7 @@ export function Dashboard() {
   const navigate = useNavigate()
   const { goals, profile, currentYear, setCurrentYear, getYearsWithData, clearAllGoals, replaceGoals } = useUserStore()
   const { theme, toggleTheme } = useTheme()
+  const { user: authUser, signOut } = useAuth()
   const gist = useGistSync()
   useKeyboardShortcuts()
   const [showGenerate, setShowGenerate] = useState(false)
@@ -110,10 +112,10 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-muted/30">
-      <div className="max-w-4xl mx-auto p-6 no-print">
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-2xl font-bold">My Goals</h1>
-          <div className="flex items-center gap-2">
+      <div className="max-w-4xl mx-auto p-4 sm:p-6 no-print">
+        <div className="flex items-center justify-between mb-2 flex-wrap gap-y-2">
+          <h1 className="text-xl sm:text-2xl font-bold">My Goals</h1>
+          <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
             {gist.isConfigured && (
               <Button
                 variant="ghost"
@@ -143,34 +145,41 @@ export function Dashboard() {
               <Bot className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate('/profile')}>
-              <User className="h-4 w-4 mr-1" /> {profile.name}
+              <User className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">{profile.name}</span>
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => { navigate('/'); }}>
-              Switch User
-            </Button>
+            {signOut ? (
+              <Button variant="ghost" size="sm" onClick={signOut}>
+                <LogOut className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Sign Out</span>
+              </Button>
+            ) : (
+              <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
+                <span className="hidden sm:inline">Switch User</span>
+                <span className="sm:hidden text-xs">Switch</span>
+              </Button>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-y-2">
           <YearSelector
             currentYear={currentYear}
             availableYears={yearsWithData}
             onChange={setCurrentYear}
           />
-          <div className="flex gap-2">
+          <div className="flex gap-1 sm:gap-2 flex-wrap">
             {goals.length > 0 && (
               <>
                 <Button variant="outline" size="sm" onClick={() => window.print()}>
-                  <Printer className="h-4 w-4 mr-1" /> Print
+                  <Printer className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Print</span>
                 </Button>
                 <Button variant="outline" size="sm" onClick={handleCopyAll}>
-                  <ClipboardCopy className="h-4 w-4 mr-1" /> Copy for Workday
+                  <ClipboardCopy className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Copy for Workday</span>
                 </Button>
               </>
             )}
             {hasApiKey() && (
               <Button size="sm" onClick={() => setShowGenerate(true)}>
-                <Sparkles className="h-4 w-4 mr-1" /> Generate
+                <Sparkles className="h-4 w-4 sm:mr-1" /> <span className="hidden sm:inline">Generate</span>
               </Button>
             )}
             {canLoadSeed && (

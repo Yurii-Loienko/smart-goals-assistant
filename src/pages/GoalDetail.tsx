@@ -167,7 +167,7 @@ export function GoalDetail() {
 
   return (
     <div className="min-h-screen bg-muted/30">
-      <div className={`max-w-3xl mx-auto p-6 transition-all ${chatOpen ? 'mr-96' : ''}`}>
+      <div className={`max-w-3xl mx-auto p-4 sm:p-6 transition-all ${chatOpen ? 'sm:mr-96' : ''}`}>
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')}>
@@ -334,12 +334,12 @@ export function GoalDetail() {
         )}
 
         <Tabs defaultValue="details" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-4">
-            <TabsTrigger value="details">Target Details</TabsTrigger>
-            <TabsTrigger value="quarterly">Quarterly Plan</TabsTrigger>
-            <TabsTrigger value="criteria">Success Criteria</TabsTrigger>
-            <TabsTrigger value="milestones">Milestones</TabsTrigger>
-            <TabsTrigger value="notes">Activity</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto sm:grid sm:grid-cols-5 mb-4">
+            <TabsTrigger value="details" className="shrink-0">Details</TabsTrigger>
+            <TabsTrigger value="quarterly" className="shrink-0">Quarterly</TabsTrigger>
+            <TabsTrigger value="criteria" className="shrink-0">Criteria</TabsTrigger>
+            <TabsTrigger value="milestones" className="shrink-0">Milestones</TabsTrigger>
+            <TabsTrigger value="notes" className="shrink-0">Activity</TabsTrigger>
           </TabsList>
 
           {/* Tab: Target Details */}
@@ -500,7 +500,7 @@ export function GoalDetail() {
                 { label: 'Milestones', value: buildWorkdayMilestones(goal) },
               ].filter((f) => f.value).map((field) => (
                 <div key={field.label} className="flex items-center gap-2 group">
-                  <span className="text-xs font-medium w-28 shrink-0 text-muted-foreground">{field.label}</span>
+                  <span className="text-xs font-medium w-20 sm:w-28 shrink-0 text-muted-foreground">{field.label}</span>
                   <div className="flex-1 text-xs bg-muted rounded px-2 py-1.5 truncate font-mono">
                     {field.value.split('\n')[0]}{field.value.includes('\n') ? '...' : ''}
                   </div>

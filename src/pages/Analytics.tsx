@@ -147,8 +147,8 @@ export function Analytics() {
             </Card>
 
             {/* Overall progress ring */}
-            <Card className="p-6">
-              <div className="flex items-center gap-8">
+            <Card className="p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-8">
                 <div className="relative w-28 h-28 shrink-0">
                   <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
                     <circle cx="50" cy="50" r="42" fill="none" strokeWidth="8" className="stroke-muted" />
@@ -165,7 +165,7 @@ export function Analytics() {
                 </div>
                 <div className="flex-1 space-y-3">
                   <h3 className="font-semibold">Year Progress</h3>
-                  <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
                     <div>
                       <p className="text-muted-foreground text-xs">Milestones</p>
                       <p className="font-semibold">{stats.milestonesCompleted} completed</p>
@@ -285,7 +285,7 @@ export function Analytics() {
                   <CardTitle className="text-base">Quarterly Workload</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {stats.quarterActivity.map((qa) => {
                       const maxItems = Math.max(...stats.quarterActivity.map((q) => q.items), 1)
                       const barPct = Math.round((qa.items / maxItems) * 100)

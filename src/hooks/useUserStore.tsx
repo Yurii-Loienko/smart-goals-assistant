@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useContext, createContext, ReactNode 
 import { UserProfile, Goal, YearWorkspace, ExportData } from '@/types'
 import { YEAR_RANGE_START, YEAR_RANGE_END, YEAR_SCAN_START, YEAR_SCAN_END } from '@/lib/constants'
 import { generateId } from '@/lib/utils'
+import type { AuthUser } from '@/hooks/useAuth'
 
 const USERS_INDEX_KEY = 'smart-goals-users'
 const CURRENT_USER_KEY = 'smart-goals-current-user'
@@ -95,8 +96,8 @@ interface UserStoreValue {
 
 const UserStoreContext = createContext<UserStoreValue | null>(null)
 
-export function UserStoreProvider({ children }: { children: ReactNode }) {
-  const store = useUserStoreInternal()
+export function UserStoreProvider({ children, cognitoUser }: { children: ReactNode; cognitoUser?: AuthUser | null }) {
+  const store = useUserStoreInternal(cognitoUser ?? null)
   return (
     <UserStoreContext.Provider value={store}>
       {children}
@@ -112,9 +113,9 @@ export function useUserStore(): UserStoreValue {
 
 deduplicateUsers()
 
-function useUserStoreInternal(): UserStoreValue {
+function useUserStoreInternal(cognitoUser: AuthUser | null): UserStoreValue {
   const [currentUserId, setCurrentUserIdState] = useState<string | null>(
-    () => localStorage.getItem(CURRENT_USER_KEY)
+    () => cognitoUser?.userId ?? localStorage.getItem(CURRENT_USER_KEY)
   )
   const [currentYear, setCurrentYearState] = useState<number>(
     () => {
@@ -167,6 +168,36 @@ function useUserStoreInternal(): UserStoreValue {
   useEffect(() => {
     localStorage.setItem(CURRENT_YEAR_KEY, String(currentYear))
   }, [currentYear])
+
+  useEffect(() => {
+    if (!cognitoUser) return
+    const uid = cognitoUser.userId
+    const existing = safeLoad<UserProfile | null>(profileKey(uid), null)
+    if (!existing) {
+      const now = new Date().toISOString()
+      const newProfile: UserProfile = {
+        id: uid,
+        name: cognitoUser.email.split('@')[0],
+        email: cognitoUser.email,
+        role: '',
+        company: '',
+        stack: [],
+        currentProjects: '',
+        learningGoals: '',
+        teamGoals: '',
+        createdAt: now,
+        updatedAt: now,
+      }
+      localStorage.setItem(profileKey(uid), JSON.stringify(newProfile))
+      const ids = getAllUserIds()
+      if (!ids.includes(uid)) saveUsersIndex([...ids, uid])
+      setProfileState(newProfile)
+    }
+    if (currentUserId !== uid) {
+      localStorage.setItem(CURRENT_USER_KEY, uid)
+      setCurrentUserIdState(uid)
+    }
+  }, [cognitoUser])
 
   const setCurrentUserId = useCallback((id: string | null) => {
     if (id) {
