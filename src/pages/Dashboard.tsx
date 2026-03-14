@@ -66,7 +66,11 @@ export function Dashboard() {
 
   const yearsWithData = getYearsWithData()
 
+  const SEED_EMAIL = 'yurii.loienko@sixt.com'
+  const canLoadSeed = profile.email.toLowerCase() === SEED_EMAIL
+
   const handleSeedGoals = () => {
+    if (!canLoadSeed) return
     clearAllGoals()
     const seedGoals = createSeedGoals()
     replaceGoals(seedGoals, 2026)
@@ -169,9 +173,11 @@ export function Dashboard() {
                 <Sparkles className="h-4 w-4 mr-1" /> Generate
               </Button>
             )}
-            <Button variant="outline" size="sm" onClick={handleSeedGoals} title="Clear all goals and load 8 predefined targets for 2026">
-              <Download className="h-4 w-4 mr-1" /> Load 2026
-            </Button>
+            {canLoadSeed && (
+              <Button variant="outline" size="sm" onClick={handleSeedGoals} title="Clear all goals and load 8 predefined targets for 2026">
+                <Download className="h-4 w-4 mr-1" /> Load 2026
+              </Button>
+            )}
             <Button variant={hasApiKey() ? 'outline' : 'default'} size="sm" onClick={() => navigate('/goals/new')}>
               <Plus className="h-4 w-4 mr-1" /> Add Goal
             </Button>
@@ -269,9 +275,11 @@ export function Dashboard() {
                 : 'Create your SMART performance targets manually.'}
             </p>
             <div className="flex gap-2 justify-center">
-              <Button onClick={handleSeedGoals}>
-                <Download className="h-4 w-4 mr-2" /> Load My Targets
-              </Button>
+              {canLoadSeed && (
+                <Button onClick={handleSeedGoals}>
+                  <Download className="h-4 w-4 mr-2" /> Load My Targets
+                </Button>
+              )}
               {hasApiKey() && (
                 <Button variant="outline" onClick={() => setShowGenerate(true)}>
                   <Sparkles className="h-4 w-4 mr-2" /> Generate Targets

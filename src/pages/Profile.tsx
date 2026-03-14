@@ -166,7 +166,7 @@ export function Profile() {
                 <Input
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  placeholder="Sixt SE"
+                  placeholder="Your Company"
                 />
               </div>
             </div>
