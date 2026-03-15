@@ -7,6 +7,8 @@ frontend:
         - nvm use 18
         - node -v
         - npm ci
+        # Fix npm optionalDependencies bug: ensure Rollup Linux binary is present (Amplify runs on Linux)
+        - npm install @rollup/rollup-linux-x64-gnu --no-save
     build:
       commands:
         - nvm use 18
@@ -16,9 +18,6 @@ frontend:
     baseDirectory: dist
     files:
       - '**/*'
-  cache:
-    paths:
-      - node_modules/**/*
 customHeaders:
   - pattern: '**/*'
     headers:
