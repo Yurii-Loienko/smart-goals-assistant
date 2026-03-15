@@ -5,9 +5,12 @@ frontend:
       commands:
         - nvm install 18
         - nvm use 18
+        - node -v
         - npm ci
     build:
       commands:
+        - nvm use 18
+        - node -v
         - npm run build
   artifacts:
     baseDirectory: dist
