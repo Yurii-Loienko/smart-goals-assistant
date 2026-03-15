@@ -113,8 +113,11 @@ export function Dashboard() {
   return (
     <div className="min-h-screen bg-muted/30">
       <div className="max-w-4xl mx-auto p-4 sm:p-6 no-print">
-        <div className="flex items-center justify-between mb-2 flex-wrap gap-y-2">
-          <h1 className="text-xl sm:text-2xl font-bold">My Goals</h1>
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-y-2">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">My Goals</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">Track and update your targets for {currentYear}</p>
+          </div>
           <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
             {gist.isConfigured && (
               <Button
@@ -300,15 +303,15 @@ export function Dashboard() {
             </div>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-10">
             {groupedGoals.map(
               (section) =>
                 section.goals.length > 0 && (
-                  <div key={section.category}>
-                    <h2 className="text-lg font-semibold mb-3 text-muted-foreground">
+                  <div key={section.category} className="scroll-mt-4">
+                    <h2 className="text-base font-semibold mb-4 text-foreground/90 uppercase tracking-wide">
                       {section.title}
                     </h2>
-                    <div className="grid gap-3 md:grid-cols-2">
+                    <div className="grid gap-4 md:grid-cols-2">
                       {section.goals.map((goal: Goal) => (
                         <GoalCard
                           key={goal.id}

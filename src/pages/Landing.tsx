@@ -84,13 +84,13 @@ export function Landing() {
           </Button>
         </div>
 
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <Target className="h-8 w-8 text-primary" />
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10 mb-5">
+            <Target className="h-10 w-10 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold">SMART Goals</h1>
-          <p className="text-muted-foreground mt-2">
-            Performance targets generator for Workday
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">SMART Goals</h1>
+          <p className="text-muted-foreground mt-3 text-base max-w-sm mx-auto">
+            Create and track your performance targets — simple, clear, and ready for Workday.
           </p>
         </div>
 

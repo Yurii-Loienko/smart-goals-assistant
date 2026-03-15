@@ -84,6 +84,22 @@ Go to **AI Settings** (robot icon in the toolbar) and choose a provider:
 
 All API keys are stored locally in your browser only. The app works fully without AI — you can create goals manually.
 
+### Optional: shared default API key (Groq / xAI / etc.)
+
+So that users can use AI without entering a key, set a **default provider and key** — never put the key in the repo.
+
+| Where | How |
+|-------|-----|
+| **Amplify (deployed app)** | App settings → Environment variables → add `VITE_AI_DEFAULT_API_KEY` and `VITE_AI_DEFAULT_PROVIDER` (e.g. `groq`). Redeploy. |
+| **Local dev** | Copy `.env.example` to `.env.local`, set the same variables and your key. `.env.local` is gitignored and never committed. |
+
+| Variable | Description |
+|----------|-------------|
+| `VITE_AI_DEFAULT_API_KEY` | Key used when the user leaves "API Key" empty in AI Settings |
+| `VITE_AI_DEFAULT_PROVIDER` | Default provider, e.g. `groq`, `xai`, `anthropic` |
+
+If these are set, users see "Shared key is available — you can leave this empty to use it" in AI Settings.
+
 ## Tech Stack
 
 - React 18 + TypeScript

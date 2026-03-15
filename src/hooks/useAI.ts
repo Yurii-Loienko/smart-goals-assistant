@@ -142,6 +142,16 @@ export const AI_PROVIDERS: AIProviderConfig[] = [
 
 const STORAGE_KEY = 'smart-goals-ai-settings'
 
+/** Build-time default API key (e.g. set in Amplify env). Never commit the key to git. */
+export function getDefaultApiKey(): string {
+  return (import.meta.env.VITE_AI_DEFAULT_API_KEY as string) || ''
+}
+
+/** True if a default key is configured (for UI hint). */
+export function hasDefaultApiKey(): boolean {
+  return Boolean(getDefaultApiKey())
+}
+
 export interface AISettings {
   provider: AIProvider
   model: string
@@ -152,7 +162,11 @@ export interface AISettings {
 }
 
 function getDefaultSettings(): AISettings {
-  return { provider: 'ollama', model: 'llama3.1', apiKey: '', ollamaUrl: 'http://localhost:11434' }
+  const defaultProvider = (import.meta.env.VITE_AI_DEFAULT_PROVIDER as AIProvider) || 'ollama'
+  const providerConfig = AI_PROVIDERS.find((p) => p.id === defaultProvider)
+  const provider = providerConfig ? defaultProvider : 'ollama'
+  const model = providerConfig?.models[0]?.id || 'llama3.1'
+  return { provider, model, apiKey: '', ollamaUrl: 'http://localhost:11434' }
 }
 
 export function getEffectiveModel(settings: AISettings): string {
@@ -186,7 +200,7 @@ export function hasApiKey(): boolean {
   const settings = loadAISettings()
   const cfg = getProviderConfig(settings.provider)
   if (cfg.noKeyRequired) return true
-  return Boolean(settings.apiKey)
+  return Boolean(settings.apiKey || getDefaultApiKey())
 }
 
 export function getProviderConfig(id: AIProvider): AIProviderConfig {
@@ -302,27 +316,32 @@ async function callCloudflare(accountId: string, apiKey: string, model: string, 
   return data.result?.response || ''
 }
 
+function getEffectiveApiKey(settings: AISettings): string {
+  return settings.apiKey.trim() || getDefaultApiKey()
+}
+
 async function callProvider(settings: AISettings, prompt: string, maxTokens: number): Promise<string> {
   const model = getEffectiveModel(settings)
+  const apiKey = getEffectiveApiKey(settings)
   switch (settings.provider) {
     case 'ollama':
       return callOllama(settings.ollamaUrl || 'http://localhost:11434', model, prompt)
     case 'anthropic':
-      return callAnthropic(settings.apiKey, model, prompt, maxTokens)
+      return callAnthropic(apiKey, model, prompt, maxTokens)
     case 'openai':
-      return callOpenAICompatible('https://api.openai.com/v1', settings.apiKey, model, prompt, maxTokens)
+      return callOpenAICompatible('https://api.openai.com/v1', apiKey, model, prompt, maxTokens)
     case 'deepseek':
-      return callOpenAICompatible('https://api.deepseek.com', settings.apiKey, model, prompt, maxTokens)
+      return callOpenAICompatible('https://api.deepseek.com', apiKey, model, prompt, maxTokens)
     case 'xai':
-      return callOpenAICompatible('https://api.x.ai/v1', settings.apiKey, model, prompt, maxTokens)
+      return callOpenAICompatible('https://api.x.ai/v1', apiKey, model, prompt, maxTokens)
     case 'google':
-      return callGoogle(settings.apiKey, model, prompt)
+      return callGoogle(apiKey, model, prompt)
     case 'groq':
-      return callOpenAICompatible('https://api.groq.com/openai/v1', settings.apiKey, model, prompt, maxTokens)
+      return callOpenAICompatible('https://api.groq.com/openai/v1', apiKey, model, prompt, maxTokens)
     case 'openrouter':
-      return callOpenAICompatible('https://openrouter.ai/api/v1', settings.apiKey, model, prompt, maxTokens)
+      return callOpenAICompatible('https://openrouter.ai/api/v1', apiKey, model, prompt, maxTokens)
     case 'cloudflare':
-      return callCloudflare(settings.accountId || '', settings.apiKey, model, prompt)
+      return callCloudflare(settings.accountId || '', apiKey, model, prompt)
   }
 }
 
@@ -336,7 +355,8 @@ export const useAI = () => {
     try {
       const settings = loadAISettings()
       const cfg = getProviderConfig(settings.provider)
-      if (!cfg.noKeyRequired && !settings.apiKey) {
+      const effectiveKey = getEffectiveApiKey(settings)
+      if (!cfg.noKeyRequired && !effectiveKey) {
         setError('API key not configured. Go to AI Settings tab.')
         return null
       }
@@ -360,7 +380,8 @@ export const useAI = () => {
     try {
       const settings = loadAISettings()
       const cfg = getProviderConfig(settings.provider)
-      if (!cfg.noKeyRequired && !settings.apiKey) return 'API key not configured. Go to AI Settings tab.'
+      const effectiveKey = getEffectiveApiKey(settings)
+      if (!cfg.noKeyRequired && !effectiveKey) return 'API key not configured. Go to AI Settings tab.'
       return (await callProvider(settings, prompt, 1024)).trim()
     } catch (err) {
       console.error('Chat error:', err)

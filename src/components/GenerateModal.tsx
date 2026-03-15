@@ -118,9 +118,14 @@ export function GenerateModal({ open, onClose }: GenerateModalProps) {
               {hasApiKey() && profile && (
                 <div className="bg-muted/50 rounded-lg p-4 text-sm space-y-1">
                   <p><span className="font-medium">Role:</span> {profile.role || 'Not set'} {profile.company ? `at ${profile.company}` : ''}</p>
-                  <p><span className="font-medium">Stack:</span> {profile.stack.join(', ') || 'Not set'}</p>
+                  <p><span className="font-medium">Stack:</span> {profile.stack?.length ? profile.stack.join(', ') : 'Not set'}</p>
                   <p><span className="font-medium">Projects:</span> {profile.currentProjects || 'Not set'}</p>
                   <p><span className="font-medium">Learning:</span> {profile.learningGoals || 'Not set'}</p>
+                  {!profile.role && !profile.currentProjects && !profile.learningGoals && (
+                    <p className="text-amber-600 dark:text-amber-400 text-xs mt-2">
+                      Tip: fill in your Profile (Role, Projects) for better targets — or use the box below.
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -217,7 +222,7 @@ export function GenerateModal({ open, onClose }: GenerateModalProps) {
           {step === 'configure' && (
             <>
               <Button variant="outline" onClick={onClose}>Cancel</Button>
-              <Button onClick={handleGenerate} disabled={loading || !profile?.role || !hasApiKey()}>
+              <Button onClick={handleGenerate} disabled={loading || !hasApiKey()}>
                 {loading ? (
                   <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Generating...</>
                 ) : (

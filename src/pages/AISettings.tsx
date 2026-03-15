@@ -8,6 +8,7 @@ import {
   saveAISettings,
   getProviderConfig,
   useAI,
+  hasDefaultApiKey,
 } from '@/hooks/useAI'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -94,7 +95,7 @@ export function AISettings() {
     toast.success(`Saved: ${currentConfig.name} / ${modelName}`)
   }
 
-  const canSave = currentConfig.noKeyRequired || apiKey.trim().length > 0
+  const canSave = currentConfig.noKeyRequired || apiKey.trim().length > 0 || hasDefaultApiKey()
 
   const handleTest = async () => {
     setTestResult('testing')
@@ -269,10 +270,16 @@ export function AISettings() {
             {!currentConfig.noKeyRequired && (
               <div>
                 <label className="text-sm font-medium mb-1.5 block">API Key</label>
+                {hasDefaultApiKey() && (
+                  <p className="text-xs text-green-600 dark:text-green-400 mb-1.5 flex items-center gap-1">
+                    <Check className="h-3.5 w-3.5" />
+                    Shared key is available — you can leave this empty to use it.
+                  </p>
+                )}
                 <Input
                   value={apiKey}
                   onChange={(e) => { setApiKey(e.target.value); setSaved(false) }}
-                  placeholder={currentConfig.keyPlaceholder}
+                  placeholder={hasDefaultApiKey() ? 'Optional: enter your own key' : currentConfig.keyPlaceholder}
                   type="password"
                   className="font-mono text-xs"
                 />
