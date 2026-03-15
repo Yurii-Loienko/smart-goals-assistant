@@ -41,7 +41,7 @@ export function Dashboard() {
   const navigate = useNavigate()
   const { goals, profile, currentYear, setCurrentYear, getYearsWithData, clearAllGoals, replaceGoals } = useUserStore()
   const { theme, toggleTheme } = useTheme()
-  const { user: authUser, signOut } = useAuth()
+  const { signOut } = useAuth()
   const gist = useGistSync()
   useKeyboardShortcuts()
   const [showGenerate, setShowGenerate] = useState(false)

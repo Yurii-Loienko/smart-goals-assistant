@@ -5,8 +5,7 @@ frontend:
       commands:
         - nvm install 18
         - nvm use 18
-        - npm install
-        - node scripts/generate-amplify-outputs.js
+        - npm ci
     build:
       commands:
         - npm run build
