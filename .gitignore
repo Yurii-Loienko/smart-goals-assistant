@@ -29,6 +29,5 @@ dist-ssr
 .env.*.local
 
 # Amplify
-amplify_outputs.json
 amplify_outputs.d.ts
 .amplify/

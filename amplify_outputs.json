@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "auth": {
+    "user_pool_id": "eu-central-1_6FhlhQqMY",
+    "user_pool_client_id": "4kioo50lfkofla6qkjpn9h9e8p",
+    "aws_region": "eu-central-1",
+    "username_attributes": ["email"]
+  }
+}
