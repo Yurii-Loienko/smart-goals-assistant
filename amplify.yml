@@ -3,7 +3,9 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        - nvm install 18
+        - nvm use 18
+        - npm install
         - node scripts/generate-amplify-outputs.js
     build:
       commands:
